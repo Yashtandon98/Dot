@@ -1,3 +1,4 @@
+import 'package:dot/db/db_helper.dart';
 import 'package:dot/services/theme_services.dart';
 import 'package:dot/ui/home_page.dart';
 import 'package:dot/ui/theme.dart';
@@ -7,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await DBHelper.initDb();
   await GetStorage.init();
   runApp(MyApp());
 }
