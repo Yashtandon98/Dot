@@ -1,13 +1,16 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'package:dot/controllers/task_controller.dart';
 import 'package:dot/services/notification_services.dart';
 import 'package:dot/services/theme_services.dart';
 import 'package:dot/ui/add_task_bar.dart';
 import 'package:dot/ui/theme.dart';
 import 'package:dot/ui/widgets/button.dart';
+import 'package:dot/ui/widgets/task_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  final TaskController _taskController = Get.put(TaskController());
   DateTime _selectedDate = DateTime.now();
   var notifyHelper;
 
@@ -39,8 +43,39 @@ class _HomePageState extends State<HomePage> {
         children: [
           _addTaskBar(),
           _addDateBar(),
+          SizedBox(height: 10,),
+          _showTasks(),
         ],
       ),
+    );
+  }
+
+  _showTasks(){
+    return Expanded(
+      child: Obx((){
+        return ListView.builder(
+            itemCount: _taskController.taskList.length,
+            itemBuilder: (_, index){
+              print(_taskController.taskList.length);
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                child: SlideAnimation(
+                  child: FadeInAnimation(
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: (){
+                            print('Tapped');
+                          },
+                          child: TaskTile(_taskController.taskList[index]),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              );
+        });
+      }),
     );
   }
 
@@ -81,6 +116,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
   _addTaskBar(){
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -91,7 +127,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(DateFormat.yMMMMd().format(DateTime.now()),
+                Text(DateFormat.yMMMMd().format(_selectedDate),
                   style: subHeadingstyle,
                 ),
                 Text("Today",
@@ -100,7 +136,11 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          MyButton(label: "+ Add Task", onTap: ()=> Get.to(AddTaskPage()))
+          MyButton(label: "+ Add Task", onTap: ()async{
+            await Get.to(AddTaskPage());
+            _taskController.getTasks();
+            }
+          )
         ],
       ),
     );
