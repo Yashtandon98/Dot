@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (_, index){
               print(_taskController.taskList.length);
               Task task = _taskController.taskList[index];
+              _notification(task);
               if(DateFormat.yMd().parse(DateFormat.yMd().format(_selectedDate)).isAfter(DateFormat.yMd().parse(task.date!)) && (task.repeat == 'Daily')){
                 return AnimationConfiguration.staggeredList(
                     position: index,
@@ -140,6 +141,45 @@ class _HomePageState extends State<HomePage> {
         });
       }),
     );
+  }
+
+  _notification(Task task){
+    if(task.repeat == 'Daily'){
+      DateTime date = DateFormat.jm().parse(task.startTime.toString());
+      var myTime = DateFormat("HH:mm").format(date);
+      notifyHelper.scheduledDailyNotification(
+          int.parse(myTime.toString().split(":")[0]),
+          int.parse(myTime.toString().split(":")[1]),
+          task
+      );
+    }
+    if(task.repeat == 'Weekly'){
+      DateTime date = DateFormat.jm().parse(task.startTime.toString());
+      var myTime = DateFormat("HH:mm").format(date);
+      notifyHelper.scheduledWeeklyNotification(
+          int.parse(myTime.toString().split(":")[0]),
+          int.parse(myTime.toString().split(":")[1]),
+          task
+      );
+    }
+    if(task.repeat == 'Monthly'){
+      DateTime date = DateFormat.jm().parse(task.startTime.toString());
+      var myTime = DateFormat("HH:mm").format(date);
+      notifyHelper.scheduledMonthlyNotification(
+          int.parse(myTime.toString().split(":")[0]),
+          int.parse(myTime.toString().split(":")[1]),
+          task
+      );
+    }
+    else{
+      DateTime date = DateFormat.jm().parse(task.startTime.toString());
+      var myTime = DateFormat("HH:mm").format(date);
+      notifyHelper.scheduledNotification(
+          int.parse(myTime.toString().split(":")[0]),
+          int.parse(myTime.toString().split(":")[1]),
+          task
+      );
+    }
   }
 
   _showBottomSheet(BuildContext, Task task){
@@ -301,7 +341,7 @@ class _HomePageState extends State<HomePage> {
             title:"Theme Changed",
             body:Get.isDarkMode?"Activated Light Theme":"Activated Dark Theme"
           );
-          notifyHelper.scheduledNotification();
+          //notifyHelper.scheduledNotification();
         },
         child: Icon(Get.isDarkMode?Icons.wb_sunny_outlined:Icons.nightlight_round,
         size: 20,
