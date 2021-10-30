@@ -38,6 +38,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
     "Monthly",
   ];
   int _selectedColor=0;
+  String dateToString(DateTime d){
+    String date = DateFormat("yyyy-MM-dd hh:mm:ss").format(d);
+    return date;
+  }
 
   @override
   Widget build(BuildContext context) {

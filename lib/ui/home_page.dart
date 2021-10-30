@@ -58,23 +58,85 @@ class _HomePageState extends State<HomePage> {
             itemCount: _taskController.taskList.length,
             itemBuilder: (_, index){
               print(_taskController.taskList.length);
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                child: SlideAnimation(
-                  child: FadeInAnimation(
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: (){
-                            _showBottomSheet(context, _taskController.taskList[index]);
-                          },
-                          child: TaskTile(_taskController.taskList[index]),
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              );
+              Task task = _taskController.taskList[index];
+              if(DateFormat.yMd().parse(DateFormat.yMd().format(_selectedDate)).isAfter(DateFormat.yMd().parse(task.date!)) && (task.repeat == 'Daily')){
+                return AnimationConfiguration.staggeredList(
+                    position: index,
+                    child: SlideAnimation(
+                      child: FadeInAnimation(
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                _showBottomSheet(context, task);
+                              },
+                              child: TaskTile(task),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                );
+              }
+              if(DateFormat.yMd().parse(DateFormat.yMd().format(_selectedDate)).difference(DateFormat.yMd().parse(task.date!)).inDays == 7 && (task.repeat == 'Weekly')){
+                return AnimationConfiguration.staggeredList(
+                    position: index,
+                    child: SlideAnimation(
+                      child: FadeInAnimation(
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                _showBottomSheet(context, task);
+                              },
+                              child: TaskTile(task),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                );
+              }
+              if(DateFormat.yMd().parse(DateFormat.yMd().format(_selectedDate)).difference(DateFormat.yMd().parse(task.date!)).inDays == 30 && (task.repeat == 'Weekly')){
+                return AnimationConfiguration.staggeredList(
+                    position: index,
+                    child: SlideAnimation(
+                      child: FadeInAnimation(
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                _showBottomSheet(context, task);
+                              },
+                              child: TaskTile(task),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                );
+              }
+              if(task.date! == DateFormat.yMd().format(_selectedDate)){
+                return AnimationConfiguration.staggeredList(
+                    position: index,
+                    child: SlideAnimation(
+                      child: FadeInAnimation(
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                _showBottomSheet(context, task);
+                              },
+                              child: TaskTile(task),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                );
+              }else{
+                return Container();
+              }
         });
       }),
     );
@@ -104,9 +166,8 @@ class _HomePageState extends State<HomePage> {
                 : _bottomSheetButton(
                 label: "Task Completed",
                 onTap: (){
-                  setState(() {
-                    Get.back();
-                  });
+                  _taskController.markTaskCompleted(task.id!);
+                  Get.back();
                 },
                 clr: primaryClr,
                 context: context
@@ -115,11 +176,8 @@ class _HomePageState extends State<HomePage> {
             _bottomSheetButton(
                 label: "Delete Task",
                 onTap: (){
-                  setState(() {
-                    _taskController.delete(task);
-                    _taskController.getTasks();
-                    Get.back();
-                  });
+                  _taskController.delete(task);
+                  Get.back();
                 },
                 clr: Colors.redAccent,
                 context: context
@@ -128,9 +186,7 @@ class _HomePageState extends State<HomePage> {
             _bottomSheetButton(
                 label: "Close",
                 onTap: (){
-                  setState(() {
-                    Get.back();
-                  });
+                  Get.back();
                 },
                 clr: Colors.white,
                 isClose: true,
@@ -197,7 +253,9 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         onDateChange: (date){
-          _selectedDate = date;
+          setState(() {
+            _selectedDate = date;
+          });
         },
       ),
     );
@@ -213,7 +271,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(DateFormat.yMMMMd().format(_selectedDate),
+                Text(DateFormat.yMMMMd().format(DateTime.now()),
                   style: subHeadingstyle,
                 ),
                 Text("Today",
