@@ -54,4 +54,12 @@ class DBHelper{
       WHERE id = ?
     ''',[1, id]);
   }
+
+  static updateDate(int id, String date) async{
+    return await _db!.rawUpdate('''
+      UPDATE tasks
+      SET date = ?
+      WHERE id = ?
+    ''',[date, id]);
+  }
 }

@@ -102,7 +102,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   ),
                 ],
               ),
-              MyInputField(title: "Remind", hint: "$_selectedRemind minutes early",
+              /*MyInputField(title: "Remind", hint: "$_selectedRemind minutes early",
                 widget: DropdownButton(
                   icon: Icon(Icons.keyboard_arrow_down,
                   color: Colors.grey,
@@ -124,7 +124,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   }
                   ).toList(),
                 ),
-              ),
+              ),*/
               MyInputField(title: "Repeat", hint: "$_selectedRepeat",
                 widget: DropdownButton(
                   icon: Icon(Icons.keyboard_arrow_down,
@@ -166,10 +166,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   _validateData(){
-    if(_titleController.text.isNotEmpty && _noteController.text.isNotEmpty){
+    if(_titleController.text.isNotEmpty){
       _addTaskToDb();
       Get.back();
-    }else if(_titleController.text.isEmpty || _noteController.text.isEmpty){
+    }else if(_titleController.text.isEmpty){
       Get.snackbar("Required", "All fields are required!",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.white,
@@ -189,7 +189,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
           date: DateFormat.yMd().format(_selectedDate),
           startTime: _startTime,
           endTime: _endTime,
-          remind: _selectedRemind,
+          remind: 0,//_selectedRemind,
           repeat: _selectedRepeat,
           color: _selectedColor,
           isCompleted: 0,

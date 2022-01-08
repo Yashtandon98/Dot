@@ -44,8 +44,13 @@ class NotifyHelper{
         _convertTime(hour, minutes),
         //tz.TZDateTime.now(tz.local).add(const Duration(minutes: minutes)),
         const NotificationDetails(
-            android: AndroidNotificationDetails('your channel id',
-                'your channel name', 'your channel description')),
+            android: AndroidNotificationDetails('Dot',
+                'Dot', 'Task Notification',
+            importance: Importance.max,
+            priority: Priority.max,
+            ticker: "Dot Task",
+            playSound: true,
+            enableVibration: true)),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime,
@@ -62,8 +67,13 @@ class NotifyHelper{
         _convertTimeDaily(hour, minutes),
         //tz.TZDateTime.now(tz.local).add(const Duration(minutes: minutes)),
         const NotificationDetails(
-            android: AndroidNotificationDetails('your channel id',
-                'your channel name', 'your channel description')),
+            android: AndroidNotificationDetails('Dot',
+                'Dot', 'Daily Task Notification',
+                importance: Importance.max,
+                priority: Priority.max,
+                ticker: "Dot Task",
+                playSound: true,
+                enableVibration: true)),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime,
@@ -80,8 +90,13 @@ class NotifyHelper{
         _convertTimeWeekly(hour, minutes),
         //tz.TZDateTime.now(tz.local).add(const Duration(minutes: minutes)),
         const NotificationDetails(
-            android: AndroidNotificationDetails('your channel id',
-                'your channel name', 'your channel description')),
+            android: AndroidNotificationDetails('Dot',
+                'Dot', 'Weekly Task Notification',
+                importance: Importance.max,
+                priority: Priority.max,
+                ticker: "Dot Task",
+                playSound: true,
+                enableVibration: true)),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime,
@@ -98,14 +113,23 @@ class NotifyHelper{
         _convertTimeMonthly(hour, minutes),
         //tz.TZDateTime.now(tz.local).add(const Duration(minutes: minutes)),
         const NotificationDetails(
-            android: AndroidNotificationDetails('your channel id',
-                'your channel name', 'your channel description')),
+            android: AndroidNotificationDetails('Dot',
+                'Dot', 'Monthly Task Notification',
+                importance: Importance.max,
+                priority: Priority.max,
+                ticker: "Dot Task",
+                playSound: true,
+                enableVibration: true)),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time,
         payload: "Weekly Task Notification"
     );
+  }
+
+  cancelNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
   }
 
   tz.TZDateTime _convertTime(int hour , int minutes){
