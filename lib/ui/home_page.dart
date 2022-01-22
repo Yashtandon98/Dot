@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:dot/models/globals.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,23 +24,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   final TaskController _taskController = Get.put(TaskController());
-  DateTime _selectedDate = DateTime.now();
+  //DateTime _selectedDate = DateTime.now();
   var notifyHelper;
   DateTime _startDate = DateTime(2021,1,1);
   DatePickerController dpt = DatePickerController();
-  int len = 0;
+  var formatter = new DateFormat('yyyy-MM-dd');
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     notifyHelper = NotifyHelper();
     notifyHelper.initializeNotification();
     notifyHelper.requestIOSPermissions();
-    WidgetsBinding.instance!.addPostFrameCallback((_) =>  dpt.animateToDate(DateTime.now(), duration: Duration(seconds: 2), curve: Curves.decelerate));
-    _taskController.getTasks();
-    len = _taskController.taskList.length;
-    print(_taskController.taskList.length);
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      dpt.animateToDate(DateTime.now(), duration: Duration(microseconds: 1), curve: Curves.fastLinearToSlowEaseIn);
+      _taskController.getTasks(selectedDate);
+    });
   }
 
   @override
@@ -52,27 +52,6 @@ class _HomePageState extends State<HomePage> {
           _addTaskBar(),
           _addDateBar(),
           SizedBox(height: 10,),
-          (len == 0) ?
-          Padding(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.10),
-            child: Container(
-              height: 250,
-              width: 250,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image(
-                    image: AssetImage("images/empty_box.png"),
-                    color: Get.isDarkMode? Colors.grey: Colors.grey,
-                    height: 200,
-                  ),
-                  SizedBox(height: 20,),
-                  Text("No tasks added for today", style: GoogleFonts.lato(textStyle: TextStyle( color: Get.isDarkMode? Colors.grey: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20)),)
-                ],
-              ),
-            ),
-          )
-              :
           _showTasks(),
         ],
       ),
@@ -83,19 +62,20 @@ class _HomePageState extends State<HomePage> {
     print('hello');
     return Expanded(
       child: Obx((){
-        if(_taskController.taskList.length == 0){
+        if((_taskController.taskList.length == 0)){
           return Container(
-            height: 200,
-            width: 200,
+            height: 250,
+            width: 250,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image(
                   image: AssetImage("images/empty_box.png"),
                   color: Get.isDarkMode? Colors.grey: Colors.grey,
+                  height: 200,
                 ),
                 SizedBox(height: 20,),
-                Text("No tasks added for today", style: GoogleFonts.lato(textStyle: TextStyle( color: Get.isDarkMode? Colors.grey: Colors.grey, fontWeight: FontWeight.bold)),)
+                Text("No tasks added for today", style: GoogleFonts.lato(textStyle: TextStyle( color: Get.isDarkMode? Colors.grey: Colors.grey, fontWeight: FontWeight.bold, fontSize: 20)),)
               ],
             ),
           );
@@ -103,89 +83,27 @@ class _HomePageState extends State<HomePage> {
           return ListView.builder(
               itemCount: _taskController.taskList.length,
               itemBuilder: (_, index){
-                //print(_taskController.taskList.length);
-                //_taskController.getTasks();
                 Task task = _taskController.taskList[index];
                 _notification(task);
-                if(DateFormat.yMd().parse(DateFormat.yMd().format(_selectedDate)).isAfter(DateFormat.yMd().parse(task.date!)) && (task.repeat == 'Daily')){
-                  return AnimationConfiguration.staggeredList(
-                      position: index,
-                      child: SlideAnimation(
-                        child: FadeInAnimation(
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: (){
-                                  _showBottomSheet(context, task);
-                                },
-                                child: TaskTile(task),
-                              )
-                            ],
-                          ),
+                return AnimationConfiguration.staggeredList(
+                    position: index,
+                    child: SlideAnimation(
+                      child: FadeInAnimation(
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: (){
+                                _showBottomSheet(context, task);
+                              },
+                              child: TaskTile(task),
+                            )
+                          ],
                         ),
-                      )
-                  );
-                }
-                if(DateFormat.yMd().parse(DateFormat.yMd().format(_selectedDate)).difference(DateFormat.yMd().parse(task.date!)).inDays == 7 && (task.repeat == 'Weekly')){
-                  return AnimationConfiguration.staggeredList(
-                      position: index,
-                      child: SlideAnimation(
-                        child: FadeInAnimation(
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: (){
-                                  _showBottomSheet(context, task);
-                                },
-                                child: TaskTile(task),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                  );
-                }
-                if(DateFormat.yMd().parse(DateFormat.yMd().format(_selectedDate)).difference(DateFormat.yMd().parse(task.date!)).inDays == 30 && (task.repeat == 'Monthly')){
-                  return AnimationConfiguration.staggeredList(
-                      position: index,
-                      child: SlideAnimation(
-                        child: FadeInAnimation(
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: (){
-                                  _showBottomSheet(context, task);
-                                },
-                                child: TaskTile(task),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                  );
-                }
-                if(task.date! == DateFormat.yMd().format(_selectedDate)){
-                  return AnimationConfiguration.staggeredList(
-                      position: index,
-                      child: SlideAnimation(
-                        child: FadeInAnimation(
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: (){
-                                  _showBottomSheet(context, task);
-                                },
-                                child: TaskTile(task),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                  );
-                }else{
-                  return Container();
-                }
-              });
+                      ),
+                    )
+                );
+              }
+          );
         }
       }),
     );
@@ -270,8 +188,8 @@ class _HomePageState extends State<HomePage> {
                   }else {
                     _taskController.delete(task);
                     notifyHelper.cancelNotification(task.id);
-                    _taskController.getTasks();
-                    len = _taskController.taskList.length;
+                    _taskController.getTasks(selectedDate);
+                    _taskController.len = _taskController.taskList.length;
                     Get.back();
                   }
                   //Get.back();
@@ -317,8 +235,8 @@ class _HomePageState extends State<HomePage> {
                   label: "Delete Task for Today",
                   onTap: (){
                     _taskController.updateTaskDate(task.id!, task.date!, task.repeat!);
-                    _taskController.getTasks();
-                    len = _taskController.taskList.length;
+                    _taskController.getTasks(selectedDate);
+                    _taskController.len = _taskController.taskList.length;
                     Get.back();
                     Get.back();
                   },
@@ -331,8 +249,8 @@ class _HomePageState extends State<HomePage> {
                   onTap: (){
                     _taskController.delete(task);
                     notifyHelper.cancelNotification(task.id);
-                    _taskController.getTasks();
-                    len = _taskController.taskList.length;
+                    _taskController.getTasks(selectedDate);
+                    _taskController.len = _taskController.taskList.length;
                     Get.back();
                     Get.back();
                   },
@@ -434,7 +352,9 @@ class _HomePageState extends State<HomePage> {
         ),
         onDateChange: (date){
           setState(() {
-            _selectedDate = date;
+            selectedDate = date;
+            print(formatter.format(selectedDate));
+            _taskController.getTasks(selectedDate);
           });
         },
       ),
@@ -461,8 +381,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           MyButton(label: "+ Add Task", onTap: ()async{
-            await Get.to(AddTaskPage());
-            _taskController.getTasks();
+            await Get.to(() => AddTaskPage());
             }
           )
         ],
@@ -489,10 +408,9 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       actions: [
-        CircleAvatar(
-          backgroundImage: AssetImage(
-            "images/profile.png"
-          ),
+        IconButton(
+          onPressed: () =>{},
+          icon: Image.asset("images/logo.png"),
         ),
         SizedBox(width: 20,)
       ],

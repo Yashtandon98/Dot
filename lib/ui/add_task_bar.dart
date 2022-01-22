@@ -7,6 +7,7 @@ import 'package:dot/ui/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:dot/models/globals.dart';
 
 class AddTaskPage extends StatefulWidget {
   const AddTaskPage({Key? key}) : super(key: key);
@@ -24,6 +25,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   String _startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   String _endTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   int _selectedRemind = 5;
+  var formatter = new DateFormat('yyyy-MM-dd');
   List<int> remindList = [
     5,
     10,
@@ -167,8 +169,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   _validateData(){
     if(_titleController.text.isNotEmpty){
-      _addTaskToDb();
-      Get.back();
+      setState(() {
+        _addTaskToDb();
+        _taskController.getTasks(selectedDate);
+        _taskController.len = _taskController.taskList.length;
+        Get.back();
+      });
     }else if(_titleController.text.isEmpty){
       Get.snackbar("Required", "All fields are required!",
         snackPosition: SnackPosition.BOTTOM,
@@ -186,7 +192,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         task: Task(
           note: _noteController.text,
           title: _titleController.text,
-          date: DateFormat.yMd().format(_selectedDate),
+          date: formatter.format(_selectedDate),
           startTime: _startTime,
           endTime: _endTime,
           remind: 0,//_selectedRemind,
@@ -249,10 +255,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
         ),
       ),
       actions: [
-        CircleAvatar(
-          backgroundImage: AssetImage(
-              "images/profile.png"
-          ),
+        IconButton(
+          onPressed: () =>{},
+          icon: Image.asset("images/logo.png"),
         ),
         SizedBox(width: 20,)
       ],

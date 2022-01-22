@@ -37,11 +37,16 @@ dependencies:
   date_picker_timeline:
   sqflite:
   flutter_staggered_animations:
+  flutter_launcher_icons:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/logo.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -58,6 +63,7 @@ flutter:
     - images/profile.png
     - images/empty_box.png
     - images/no-task.png
+    - images/logo.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

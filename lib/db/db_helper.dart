@@ -20,7 +20,7 @@ class DBHelper{
          return db.execute(
            "CREATE TABLE $_tableName("
                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-               "title STRING, note TEXT, date STRING, "
+               "title STRING, note TEXT, date TEXT, "
                "startTime STRING, endTime STRING, "
                "remind INTEGER, repeat STRING, "
                "color INTEGER, "
@@ -38,9 +38,16 @@ class DBHelper{
     return await _db?.insert(_tableName, task!.toJson())??1;
   }
 
-  static Future<List<Map<String, dynamic>>> query() async{
+  static Future<List<Map<String, dynamic>>> query(String cDate) async{
     print("query function called");
-    return await _db!.query(_tableName);
+    return await _db!.rawQuery('''
+      SELECT * FROM tasks
+      WHERE 
+      (date = ?) or
+      (repeat = 'Daily' and CAST((JulianDay(?) - JulianDay(date)) AS INTEGER) > 0) or
+      (repeat = 'Weekly' and CAST((JulianDay(?) - JulianDay(date))%7 AS INTEGER) = 0) or
+      (repeat = 'Monthly' and CAST((JulianDay(?) - JulianDay(date))%30 AS INTEGER) = 0)
+    ''',[cDate,cDate,cDate,cDate]);
   }
 
   static delete(task) async{
