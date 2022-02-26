@@ -235,7 +235,7 @@ class _HomePageState extends State<HomePage> {
                   label: "Delete Task for Today",
                   onTap: (){
                     _taskController.updateTaskDate(task.id!, task.date!, task.repeat!);
-                    _taskController.getTasks(selectedDate);
+                    //_taskController.getTasks(selectedDate);
                     _taskController.len = _taskController.taskList.length;
                     Get.back();
                     Get.back();

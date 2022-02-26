@@ -40,23 +40,23 @@ class TaskController extends GetxController{
 
   void updateTaskDate(int id, String date, String repeat) async{
     if(repeat == "Daily"){
-      DateTime oldDate = DateFormat.yMd().parse(date);
+      DateTime oldDate = DateTime.parse(date);
       DateTime updatedDate = oldDate.add(Duration(days: 1));
-      String finalDate = DateFormat.yMd().format(updatedDate);
+      String finalDate = formatter.format(updatedDate);
       await DBHelper.updateDate(id, finalDate);
       getTasks(selectedDate);
     }
-    else if(repeat =="Weekly"){
-      DateTime oldDate = DateFormat.yMd().parse(date);
+    else if(repeat == "Weekly"){
+      DateTime oldDate = DateTime.parse(date);
       DateTime updatedDate = oldDate.add(Duration(days: 7));
-      String finalDate = DateFormat.yMd().format(updatedDate);
+      String finalDate = formatter.format(updatedDate);
       await DBHelper.updateDate(id, finalDate);
       getTasks(selectedDate);
     }
     else{
-      DateTime oldDate = DateFormat.yMd().parse(date);
+      DateTime oldDate = DateTime.parse(date);
       DateTime updatedDate = oldDate.add(Duration(days: 30));
-      String finalDate = DateFormat.yMd().format(updatedDate);
+      String finalDate = formatter.format(updatedDate);
       await DBHelper.updateDate(id, finalDate);
       getTasks(selectedDate);
     }

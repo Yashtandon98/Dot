@@ -20,7 +20,7 @@ class DBHelper{
          return db.execute(
            "CREATE TABLE $_tableName("
                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-               "title STRING, note TEXT, date TEXT, "
+               "title STRING, note TEXT, date STRING, "
                "startTime STRING, endTime STRING, "
                "remind INTEGER, repeat STRING, "
                "color INTEGER, "
@@ -45,9 +45,9 @@ class DBHelper{
       WHERE 
       (date = ?) or
       (repeat = 'Daily' and CAST((JulianDay(?) - JulianDay(date)) AS INTEGER) > 0) or
-      (repeat = 'Weekly' and CAST((JulianDay(?) - JulianDay(date))%7 AS INTEGER) = 0) or
-      (repeat = 'Monthly' and CAST((JulianDay(?) - JulianDay(date))%30 AS INTEGER) = 0)
-    ''',[cDate,cDate,cDate,cDate]);
+      (repeat = 'Weekly' and CAST((JulianDay(?) - JulianDay(date)) AS INTEGER) > 0 and CAST((JulianDay(?) - JulianDay(date))%7 AS INTEGER) = 0) or
+      (repeat = 'Monthly' and CAST((JulianDay(?) - JulianDay(date)) AS INTEGER) > 0 and substr(?,9) = substr(date,9))
+    ''',[cDate,cDate,cDate,cDate,cDate,cDate]);
   }
 
   static delete(task) async{
@@ -65,8 +65,8 @@ class DBHelper{
   static updateDate(int id, String date) async{
     return await _db!.rawUpdate('''
       UPDATE tasks
-      SET date = ?
+      SET date = ?, isCompleted = ?
       WHERE id = ?
-    ''',[date, id]);
+    ''',[date, 0, id]);
   }
 }
