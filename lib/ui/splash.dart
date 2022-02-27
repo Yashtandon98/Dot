@@ -1,7 +1,10 @@
+import 'package:dot/ui/onBoard.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:dot/ui/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../main.dart';
 
 class splash extends StatefulWidget {
   @override
@@ -23,6 +26,10 @@ class _splashState extends State<splash> {
   }
 
   route() {
+    isViewed != 0 ?
+    Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (context) => OnBoard())
+    ):
     Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) => HomePage())
     );

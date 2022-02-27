@@ -38,6 +38,7 @@ dependencies:
   sqflite:
   flutter_staggered_animations:
   flutter_launcher_icons:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:
